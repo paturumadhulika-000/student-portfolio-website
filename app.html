@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PortfolioMaker | App</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-dark: #1a2555;
+            --secondary-dark: #2d3e7a;
+            --tertiary-dark: #3d4fa8;
+            --accent-blue: #4f7ef5;
+            --accent-purple: #7c3aed;
+            --accent-cyan: #06b6d4;
+            --text-light: #ffffff;
+            --text-muted: #b4bfd9;
+            --gradient-primary: linear-gradient(135deg, #1a2555 0%, #2d3e7a 50%, #3d4fa8 100%);
+            --gradient-accent: linear-gradient(135deg, #4f7ef5 0%, #7c3aed 50%, #06b6d4 100%);
+            --shadow-card: 0 10px 40px rgba(0, 0, 0, 0.3);
+            --shadow-hover: 0 20px 60px rgba(79, 126, 245, 0.2);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--gradient-primary);
+            color: var(--text-light);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* NAVIGATION */
+        nav {
+            background: rgba(26, 37, 85, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(79, 126, 245, 0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient-accent);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            font-size: 1.5rem;
+            -webkit-text-fill-color: initial;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        nav a, nav button {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+            position: relative;
+            cursor: pointer;
+        }
+
+        nav a:hover, nav button:hover {
+            color: var(--accent-blue);
+        }
+
+        nav a.active {
+            color: var(--accent-blue);
+            border-bottom: 2px solid var(--accent-blue);
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.6rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: var(--accent-blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #3f5ee0;
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-light);
+            border: 1px solid var(--accent-blue);
+        }
+
+        .btn-secondary:hover {
+            background: var(--accent-blue);
+            box-shadow: var(--shadow-hover);
+        }
+
+        /* CONTAINER */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* PAGE SECTIONS */
+        .page {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+            min-height: calc(100vh - 80px);
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* TEMPLATES PAGE */
+        .templates-header {
+            padding: 3rem 0;
+            text-align: center;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            font-weight: 700;
+        }
+
+        .section-subtitle {
+            color: var(--text-muted);
+            margin-bottom: 3rem;
+            font-size: 1.1rem;
+        }
+
+        .template-filters {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.6rem 1.5rem;
+            border: 1px solid rgba(79, 126, 245, 0.3);
+            background: transparent;
+            color: var(--text-light);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .filter-btn.active {
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+        }
+
+        .filter-btn:hover {
+            border-color: var(--accent-blue);
+            color: var(--accent-blue);
+        }
+
+        .templates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding-bottom: 4rem;
+        }
+
+        .template-card {
+            background: rgba(45, 62, 122, 0.5);
+            border: 1px solid rgba(79, 126, 245, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .template-card:hover {
+            border-color: var(--accent-blue);
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-8px);
+        }
+
+        .template-preview {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, rgba(79, 126, 245, 0.15) 0%, rgba(124, 58, 237, 0.15) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: var(--accent-blue);
+        }
+
+        .template-info {
+            padding: 1.5rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .template-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .template-description {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            flex-grow: 1;
+        }
+
+        .template-btn {
+            padding: 0.8rem;
+            background: var(--accent-blue);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        .template-btn:hover {
+            background: #3f5ee0;
+            box-shadow: var(--shadow-hover);
+        }
+
+        /* CREATE PAGE */
+        .create-section {
+            padding: 3rem 0;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: start;
+        }
+
+        .create-form {
+            background: rgba(45, 62, 122, 0.5);
+            border: 1px solid rgba(79, 126, 245, 0.1);
+            padding: 2rem;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+
+        .create-form h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-light);
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            background: rgba(26, 37, 85, 0.6);
+            border: 1px solid rgba(79, 126, 245, 0.2);
+            color: var(--text-light);
+            border-radius: 6px;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(79, 126, 245, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .form-buttons button {
+            flex: 1;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-generate {
+            background: var(--accent-blue);
+            color: white;
+        }
+
+        .btn-generate:hover {
+            background: #3f5ee0;
+            box-shadow: var(--shadow-hover);
+        }
+
+        .create-preview {
+            background: rgba(45, 62, 122, 0.5);
+            border: 1px solid rgba(79, 126, 245, 0.1);
+            padding: 2rem;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            min-height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+        }
+
+        .preview-content {
+            text-align: center;
+        }
+
+        .preview-content .profile-img,
+        .profile-img {
+            width: 150px;
+            height: 150px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+
+        .preview-content h3 {
+            font-size: 1.5rem;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .preview-content p {
+            color: var(--text-muted);
+        }
+
+        /* EXPLORE PAGE */
+        .explore-header {
+            padding: 3rem 0;
+            text-align: center;
+        }
+
+        .explore-filters {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .portfolios-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .portfolio-card {
+            background: rgba(45, 62, 122, 0.5);
+            border: 1px solid rgba(79, 126, 245, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .portfolio-card:hover {
+            border-color: var(--accent-blue);
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-8px);
+        }
+
+        .portfolio-header {
+            background: linear-gradient(135deg, rgba(79, 126, 245, 0.15) 0%, rgba(124, 58, 237, 0.15) 100%);
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .portfolio-avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+        }
+
+        .portfolio-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .portfolio-role {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .portfolio-body {
+            padding: 1.5rem;
+        }
+
+        .portfolio-desc {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .portfolio-skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .skill-tag {
+            background: rgba(79, 126, 245, 0.2);
+            color: var(--accent-blue);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .portfolio-links {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        .social-icon {
+            width: 35px;
+            height: 35px;
+            background: rgba(79, 126, 245, 0.2);
+            border: 1px solid rgba(79, 126, 245, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-blue);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .social-icon:hover {
+            background: var(--accent-blue);
+            color: white;
+            border-color: var(--accent-blue);
+        }
+
+        .portfolio-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid rgba(79, 126, 245, 0.1);
+            text-align: center;
+        }
+
+        .view-btn {
+            padding: 0.6rem 1.5rem;
+            background: var(--accent-blue);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .view-btn:hover {
+            background: #3f5ee0;
+            box-shadow: var(--shadow-hover);
+        }
+
+        /* SIDEBAR */
+        .explore-container {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 2rem;
+            align-items: start;
+            padding: 3rem 0;
+        }
+
+        .explore-sidebar {
+            background: rgba(45, 62, 122, 0.5);
+            border: 1px solid rgba(79, 126, 245, 0.1);
+            padding: 2rem;
+            border-radius: 12px;
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        .sidebar-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .sidebar-content {
+            text-align: center;
+        }
+
+        .sidebar-avatar {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+
+        .sidebar-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .sidebar-desc {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .sidebar-btn {
+            width: 100%;
+            padding: 0.8rem;
+            background: var(--accent-blue);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .sidebar-btn:hover {
+            background: #3f5ee0;
+            box-shadow: var(--shadow-hover);
+        }
+
+        /* FEATURED */
+        .featured-section {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(79, 126, 245, 0.1);
+        }
+
+        .featured-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .featured-item {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
+            padding: 0.8rem;
+            background: rgba(26, 37, 85, 0.5);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .featured-item:hover {
+            background: rgba(79, 126, 245, 0.2);
+        }
+
+        .featured-avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .featured-info {
+            flex-grow: 1;
+            text-align: left;
+        }
+
+        .featured-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .featured-role {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        .featured-arrow {
+            color: var(--accent-blue);
+            font-size: 1rem;
+        }
+
+        /* CONTACT PAGE */
+        .contact-section {
+            text-align: center;
+            padding: 4rem 0;
+        }
+
+        .contact-form {
+            max-width: 500px;
+            margin: 0 auto;
+            background: rgba(45, 62, 122, 0.5);
+            border: 1px solid rgba(79, 126, 245, 0.1);
+            padding: 2rem;
+            border-radius: 12px;
+        }
+
+        .contact-form button {
+            width: 100%;
+            padding: 0.8rem;
+        }
+
+        /* SUCCESS MESSAGE */
+        .success-message {
+            display: none;
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            background: #4caf50;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            z-index: 1001;
+            animation: slideIn 0.3s ease-in;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(400px); opacity: 0; }
+            to   { transform: translateX(0); opacity: 1; }
+        }
+
+        /* MODAL */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--gradient-primary);
+            border: 1px solid rgba(79, 126, 245, 0.2);
+            border-radius: 12px;
+            padding: 2rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal-header {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .modal-close:hover {
+            color: var(--accent-blue);
+        }
+
+        .modal-form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .modal-form-group input {
+            width: 100%;
+            padding: 0.8rem;
+            background: rgba(26, 37, 85, 0.6);
+            border: 1px solid rgba(79, 126, 245, 0.2);
+            color: var(--text-light);
+            border-radius: 6px;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+
+        .modal-form-group input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(79, 126, 245, 0.1);
+        }
+
+        .modal-submit {
+            width: 100%;
+            padding: 0.8rem;
+            background: var(--accent-blue);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .modal-submit:hover {
+            background: #3f5ee0;
+            box-shadow: var(--shadow-hover);
+        }
+
+        /* PORTFOLIO DISPLAY PAGE */
+        .portfolio-display {
+            padding: 3rem 0;
+            text-align: center;
+        }
+
+        .portfolio-showcase {
+            background: rgba(45, 62, 122, 0.5);
+            border: 1px solid rgba(79, 126, 245, 0.1);
+            padding: 3rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+        }
+
+        .portfolio-showcase .profile-img {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            border-radius: 50%;
+            margin: 0 auto 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+        }
+
+        .portfolio-showcase h2 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .portfolio-showcase .title {
+            color: var(--accent-blue);
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .portfolio-showcase .about {
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.8;
+        }
+
+        .portfolio-showcase .skills-display {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .portfolio-showcase .skill-display {
+            background: rgba(79, 126, 245, 0.2);
+            color: var(--accent-blue);
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 600;
+        }
+
+        .portfolio-showcase .contact-info {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .portfolio-showcase .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-muted);
+        }
+
+        .portfolio-showcase .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .portfolio-showcase .action-buttons button {
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-download {
+            background: var(--accent-blue);
+            color: white;
+        }
+
+        .btn-download:hover {
+            background: #3f5ee0;
+            box-shadow: var(--shadow-hover);
+        }
+
+        .btn-share {
+            background: transparent;
+            color: var(--accent-blue);
+            border: 2px solid var(--accent-blue);
+        }
+
+        .btn-share:hover {
+            background: var(--accent-blue);
+            color: white;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1024px) {
+            .explore-container { grid-template-columns: 1fr; }
+            .create-section { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            nav ul { gap: 1rem; }
+            .section-title { font-size: 2rem; }
+            .templates-grid, .portfolios-grid { grid-template-columns: 1fr; }
+            nav { flex-direction: column; gap: 1rem; }
+            nav ul { flex-direction: column; width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SUCCESS MESSAGE -->
+    <div class="success-message" id="successMessage"></div>
+
+    <!-- NAVIGATION -->
+    <nav>
+        <a class="logo" href="index.html">
+            <span class="logo-icon">🚀</span>
+            <span>PortfolioMaker</span>
+        </a>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><button class="nav-link" onclick="goToPage('templates'); return false;">Templates</button></li>
+            <li><button class="nav-link" onclick="goToPage('create'); return false;">Create</button></li>
+            <li><button class="nav-link" onclick="goToPage('explore'); return false;">Explore Portfolios</button></li>
+            <li><button class="nav-link" onclick="goToPage('contact'); return false;">Contact</button></li>
+        </ul>
+        <div class="nav-buttons">
+            <button class="btn btn-secondary" onclick="showModal('loginModal'); return false;">Login</button>
+            <button class="btn btn-primary" onclick="showModal('signupModal'); return false;">Sign Up</button>
+        </div>
+    </nav>
+
+    <!-- TEMPLATES PAGE -->
+    <div class="page active" id="templates">
+        <div class="container">
+            <div class="templates-header">
+                <h2 class="section-title">Select a Template</h2>
+                <p class="section-subtitle">Choose a template to create your professional portfolio.</p>
+            </div>
+
+            <div class="template-filters">
+                <button class="filter-btn active" onclick="filterTemplates('all'); return false;">All</button>
+                <button class="filter-btn" onclick="filterTemplates('modern'); return false;">Modern</button>
+                <button class="filter-btn" onclick="filterTemplates('creative'); return false;">Creative</button>
+                <button class="filter-btn" onclick="filterTemplates('minimal'); return false;">Minimal</button>
+            </div>
+
+            <div class="templates-grid" id="templatesGrid">
+                <!-- Templates generated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- CREATE PAGE -->
+    <div class="page" id="create">
+        <div class="container">
+            <div class="create-section">
+                <div class="create-form">
+                    <h2>Create Your Portfolio</h2>
+                    <p style="color: var(--text-muted); margin-bottom: 2rem;">Enter your details to generate your portfolio website automatically.</p>
+
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" placeholder="John Doe" id="fullName">
+                    </div>
+                    <div class="form-group">
+                        <label>Professional Title</label>
+                        <input type="text" placeholder="Web Developer" id="title">
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" placeholder="john@example.com" id="email">
+                    </div>
+                    <div class="form-group">
+                        <label>About You</label>
+                        <textarea placeholder="Tell us about yourself..." id="about"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Skills (comma separated)</label>
+                        <input type="text" placeholder="HTML, CSS, JavaScript, React" id="skills">
+                    </div>
+
+                    <div class="form-buttons">
+                        <button class="btn-generate" onclick="generatePortfolio(); return false;">Generate Portfolio</button>
+                        <button class="btn btn-secondary" onclick="clearForm(); return false;" style="flex: 1; padding: 0.8rem;">Clear</button>
+                    </div>
+                </div>
+
+                <div class="create-preview" id="previewArea">
+                    <div class="preview-content">
+                        <div class="profile-img">👤</div>
+                        <h3>Your Preview Here</h3>
+                        <p>Fill in the form and click Generate to see your portfolio preview</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- EXPLORE PAGE -->
+    <div class="page" id="explore">
+        <div class="container">
+            <div class="explore-header">
+                <h2 class="section-title">Explore Portfolios</h2>
+                <p class="section-subtitle">Discover amazing portfolios from talented creators</p>
+            </div>
+
+            <div class="explore-container">
+                <div>
+                    <div class="explore-filters">
+                        <button class="filter-btn active" onclick="filterPortfolios('all'); return false;">All</button>
+                        <button class="filter-btn" onclick="filterPortfolios('web'); return false;">Web Development</button>
+                        <button class="filter-btn" onclick="filterPortfolios('design'); return false;">Design</button>
+                        <button class="filter-btn" onclick="filterPortfolios('development'); return false;">Development</button>
+                    </div>
+
+                    <div class="portfolios-grid" id="portfoliosGrid">
+                        <!-- Portfolios generated by JavaScript -->
+                    </div>
+                </div>
+
+                <div class="explore-sidebar">
+                    <div class="sidebar-content">
+                        <div class="sidebar-avatar">⭐</div>
+                        <h3 class="sidebar-title">Portfolio of the Week</h3>
+                        <p class="sidebar-desc">Showcase your template person and set complete press.</p>
+                        <button class="sidebar-btn" onclick="goToPage('create'); return false;">Get Started</button>
+                    </div>
+
+                    <div class="featured-section">
+                        <h3 class="featured-title">Featured Creators</h3>
+                        <div id="featuredList">
+                            <!-- Featured items generated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTACT PAGE -->
+    <div class="page" id="contact">
+        <div class="container">
+            <div class="contact-section">
+                <h2 class="section-title">Get In Touch</h2>
+                <p class="section-subtitle" style="margin-bottom: 3rem;">Have questions? We'd love to hear from you.</p>
+
+                <div class="contact-form">
+                    <div class="form-group">
+                        <label>Your Name</label>
+                        <input type="text" placeholder="John Doe" id="contactName">
+                    </div>
+                    <div class="form-group">
+                        <label>Your Email</label>
+                        <input type="email" placeholder="john@example.com" id="contactEmail">
+                    </div>
+                    <div class="form-group">
+                        <label>Subject</label>
+                        <input type="text" placeholder="How can we help?" id="contactSubject">
+                    </div>
+                    <div class="form-group">
+                        <label>Your Message</label>
+                        <textarea placeholder="Your message..." id="contactMessage" style="min-height: 150px;"></textarea>
+                    </div>
+                    <button class="btn btn-primary" onclick="sendMessage(); return false;">Send Message</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PORTFOLIO DISPLAY PAGE -->
+    <div class="page" id="portfolio-display">
+        <div class="container">
+            <div class="portfolio-display">
+                <div class="portfolio-showcase" id="portfolioShowcase">
+                    <!-- Portfolio displayed here -->
+                </div>
+                <button class="btn btn-secondary" onclick="goToPage('create'); return false;" style="padding: 0.8rem 2rem;">← Back to Create</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- LOGIN MODAL -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span>Login to PortfolioMaker</span>
+                <button class="modal-close" onclick="closeModal('loginModal'); return false;">✕</button>
+            </div>
+            <div class="modal-form-group">
+                <label>Email</label>
+                <input type="email" placeholder="Enter your email" id="loginEmail">
+            </div>
+            <div class="modal-form-group">
+                <label>Password</label>
+                <input type="password" placeholder="Enter your password" id="loginPassword">
+            </div>
+            <button class="modal-submit" onclick="handleLogin(); return false;">Login</button>
+            <p style="margin-top: 1rem; color: var(--text-muted); font-size: 0.9rem;">
+                Don't have an account?
+                <button style="background: none; border: none; color: var(--accent-blue); cursor: pointer; text-decoration: underline;"
+                    onclick="switchModal('loginModal', 'signupModal'); return false;">Sign Up</button>
+            </p>
+        </div>
+    </div>
+
+    <!-- SIGNUP MODAL -->
+    <div class="modal" id="signupModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span>Create Your Account</span>
+                <button class="modal-close" onclick="closeModal('signupModal'); return false;">✕</button>
+            </div>
+            <div class="modal-form-group">
+                <label>Full Name</label>
+                <input type="text" placeholder="Enter your full name" id="signupName">
+            </div>
+            <div class="modal-form-group">
+                <label>Email</label>
+                <input type="email" placeholder="Enter your email" id="signupEmail">
+            </div>
+            <div class="modal-form-group">
+                <label>Password</label>
+                <input type="password" placeholder="Create a password" id="signupPassword">
+            </div>
+            <div class="modal-form-group">
+                <label>Confirm Password</label>
+                <input type="password" placeholder="Confirm your password" id="signupConfirm">
+            </div>
+            <button class="modal-submit" onclick="handleSignup(); return false;">Sign Up</button>
+            <p style="margin-top: 1rem; color: var(--text-muted); font-size: 0.9rem;">
+                Already have an account?
+                <button style="background: none; border: none; color: var(--accent-blue); cursor: pointer; text-decoration: underline;"
+                    onclick="switchModal('signupModal', 'loginModal'); return false;">Login</button>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // SAMPLE DATA
+        const templates = [
+            { id: 1, name: "Modern Portfolio",   category: "modern",   emoji: "🎨", description: "Clean and modern portfolio template" },
+            { id: 2, name: "Creative Showcase",  category: "creative", emoji: "✨", description: "Bold and creative portfolio design" },
+            { id: 3, name: "Minimal Clean",      category: "minimal",  emoji: "📄", description: "Simple and elegant portfolio" },
+            { id: 4, name: "Developer Pro",      category: "modern",   emoji: "💻", description: "Perfect for developers and programmers" },
+            { id: 5, name: "Design Studio",      category: "creative", emoji: "🖌️", description: "Showcase your design work beautifully" },
+            { id: 6, name: "Tech Focus",         category: "minimal",  emoji: "🔧", description: "Technical portfolio for engineers" }
+        ];
+
+        const portfolios = [
+            { id: 1, name: "John Doe",       role: "Web Developer",     category: "web",         emoji: "👨‍💻", desc: "Passionate about building amazing web experiences",    skills: ["HTML", "CSS", "JavaScript", "React"] },
+            { id: 2, name: "Sarah Johnson",  role: "UI/UX Designer",    category: "design",      emoji: "👩‍🎨", desc: "Creating beautiful and functional designs",           skills: ["Figma", "Design Systems", "UX Research"] },
+            { id: 3, name: "Mike Chen",      role: "Full Stack Dev",    category: "development", emoji: "👨‍💼", desc: "Building scalable web applications",                  skills: ["Node.js", "React", "MongoDB", "AWS"] },
+            { id: 4, name: "Emma Williams",  role: "Frontend Engineer", category: "web",         emoji: "👩‍💻", desc: "Specializing in modern JavaScript frameworks",         skills: ["Vue.js", "TypeScript", "CSS"] },
+            { id: 5, name: "Alex Martinez",  role: "Product Manager",   category: "development", emoji: "👨‍🔬", desc: "Driving product innovation and growth",               skills: ["Strategy", "Analytics", "Leadership"] }
+        ];
+
+        const featured = [
+            { name: "John Doe",   role: "Web Developer", emoji: "👨‍💻" },
+            { name: "Sarah Chen", role: "Designer",       emoji: "👩‍🎨" },
+            { name: "Mike Smith", role: "Developer",      emoji: "👨‍💻" }
+        ];
+
+        let selectedTemplate = null;
+
+        // PAGE NAVIGATION
+        function goToPage(pageName) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageName).classList.add('active');
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            const navLink = document.querySelector(`button[onclick*="${pageName}"]`);
+            if (navLink) navLink.classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        // RENDER TEMPLATES
+        function renderTemplates(filter = 'all') {
+            const grid = document.getElementById('templatesGrid');
+            const filtered = filter === 'all' ? templates : templates.filter(t => t.category === filter);
+            grid.innerHTML = filtered.map(template => `
+                <div class="template-card" onclick="selectTemplate(${template.id}); return false;">
+                    <div class="template-preview">${template.emoji}</div>
+                    <div class="template-info">
+                        <div class="template-name">${template.name}</div>
+                        <div class="template-description">${template.description}</div>
+                        <button class="template-btn" onclick="selectTemplate(${template.id}); return false;">Select Template</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterTemplates(category) {
+            document.querySelectorAll('.template-filters .filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderTemplates(category);
+        }
+
+        // RENDER PORTFOLIOS
+        function renderPortfolios(filter = 'all') {
+            const grid = document.getElementById('portfoliosGrid');
+            const filtered = filter === 'all' ? portfolios : portfolios.filter(p => p.category === filter);
+            grid.innerHTML = filtered.map(portfolio => `
+                <div class="portfolio-card" onclick="viewPortfolio('${portfolio.name}', '${portfolio.role}', '${portfolio.emoji}'); return false;">
+                    <div class="portfolio-header">
+                        <div class="portfolio-avatar">${portfolio.emoji}</div>
+                        <div class="portfolio-name">${portfolio.name}</div>
+                        <div class="portfolio-role">${portfolio.role}</div>
+                    </div>
+                    <div class="portfolio-body">
+                        <div class="portfolio-desc">${portfolio.desc}</div>
+                        <div class="portfolio-skills">
+                            ${portfolio.skills.map(skill => `<div class="skill-tag">${skill}</div>`).join('')}
+                        </div>
+                        <div class="portfolio-links">
+                            <div class="social-icon">🔗</div>
+                            <div class="social-icon">📧</div>
+                            <div class="social-icon">💼</div>
+                            <div class="social-icon">🐙</div>
+                        </div>
+                    </div>
+                    <div class="portfolio-footer">
+                        <button class="view-btn" onclick="viewPortfolio('${portfolio.name}', '${portfolio.role}', '${portfolio.emoji}'); return false;">View Portfolio</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterPortfolios(category) {
+            document.querySelectorAll('.explore-filters .filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderPortfolios(category);
+        }
+
+        // RENDER FEATURED
+        function renderFeatured() {
+            const list = document.getElementById('featuredList');
+            list.innerHTML = featured.map((person, index) => `
+                <div class="featured-item" onclick="viewPortfolio('${person.name}', '${person.role}', '${person.emoji}'); return false;">
+                    <div class="featured-avatar">${person.emoji}</div>
+                    <div class="featured-info">
+                        <div class="featured-name">${person.name}</div>
+                        <div class="featured-role">${person.role}</div>
+                    </div>
+                    <div class="featured-arrow">→</div>
+                </div>
+            `).join('');
+        }
+
+        // CREATE / GENERATE PORTFOLIO
+        function generatePortfolio() {
+            const fullName = document.getElementById('fullName').value || 'Your Name';
+            const title    = document.getElementById('title').value   || 'Professional Title';
+            const email    = document.getElementById('email').value   || 'your@email.com';
+            const about    = document.getElementById('about').value   || 'Tell us about yourself...';
+            const skills   = document.getElementById('skills').value  || 'Skill 1, Skill 2, Skill 3';
+            const skillsArray = skills.split(',').map(s => s.trim()).slice(0, 4);
+
+            const preview = document.getElementById('previewArea');
+            preview.innerHTML = `
+                <div style="text-align: center; width: 100%;">
+                    <div class="profile-img">👤</div>
+                    <h3 style="color: var(--text-light); margin: 1rem 0; font-size: 1.5rem;">${fullName}</h3>
+                    <p style="color: var(--accent-blue); margin-bottom: 1rem; font-size: 1.1rem;">${title}</p>
+                    <p style="color: var(--text-muted); max-height: 80px; overflow-y: auto; margin-bottom: 1rem; font-size: 0.9rem;">${about}</p>
+                    <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; margin-bottom: 1rem;">
+                        ${skillsArray.map(skill => `<div class="skill-tag">${skill}</div>`).join('')}
+                    </div>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">📧 ${email}</p>
+                    <button class="btn btn-primary" onclick="publishPortfolio('${fullName}', '${title}', '${email}', '${about}', '${skills}'); return false;" style="margin-top: 1.5rem; padding: 0.8rem 2rem;">Publish Portfolio</button>
+                </div>
+            `;
+            showSuccess('Portfolio preview updated!');
+        }
+
+        function clearForm() {
+            ['fullName', 'title', 'email', 'about', 'skills'].forEach(id => {
+                document.getElementById(id).value = '';
+            });
+            document.getElementById('previewArea').innerHTML = `
+                <div class="preview-content">
+                    <div class="profile-img">👤</div>
+                    <h3>Your Preview Here</h3>
+                    <p>Fill in the form and click Generate to see your portfolio preview</p>
+                </div>
+            `;
+        }
+
+        function publishPortfolio(fullName, title, email, about, skills) {
+            const portfolioData = { fullName, title, email, about, skills };
+            displayPortfolio(portfolioData);
+            goToPage('portfolio-display');
+            showSuccess('Portfolio published successfully!');
+        }
+
+        function displayPortfolio(data) {
+            const skillsArray = data.skills.split(',').map(s => s.trim());
+            document.getElementById('portfolioShowcase').innerHTML = `
+                <div class="profile-img">👤</div>
+                <h2>${data.fullName}</h2>
+                <p class="title">${data.title}</p>
+                <p class="about">${data.about}</p>
+                <div class="skills-display">
+                    ${skillsArray.map(skill => `<div class="skill-display">${skill.trim()}</div>`).join('')}
+                </div>
+                <div class="contact-info">
+                    <div class="contact-item">📧 ${data.email}</div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn-download" onclick="downloadPortfolio('${data.fullName}'); return false;">📥 Download</button>
+                    <button class="btn-share" onclick="sharePortfolio('${data.fullName}'); return false;">📤 Share</button>
+                </div>
+            `;
+        }
+
+        function viewPortfolio(name, role, emoji) {
+            displayPortfolio({
+                fullName: name,
+                title: role,
+                email: 'contact@example.com',
+                about: 'A talented professional dedicated to excellence.',
+                skills: 'Skill 1, Skill 2, Skill 3'
+            });
+            goToPage('portfolio-display');
+        }
+
+        function downloadPortfolio(name) { showSuccess(`Portfolio "${name}" downloaded!`); }
+        function sharePortfolio(name)    { showSuccess(`Portfolio link copied to clipboard!`); }
+
+        // TEMPLATE SELECTION
+        function selectTemplate(templateId) {
+            const template = templates.find(t => t.id === templateId);
+            selectedTemplate = template;
+            showSuccess(`Selected: ${template.name}`);
+            goToPage('create');
+        }
+
+        // MODALS
+        function showModal(modalId)   { document.getElementById(modalId).classList.add('active'); }
+        function closeModal(modalId)  { document.getElementById(modalId).classList.remove('active'); }
+        function switchModal(from, to) { closeModal(from); showModal(to); }
+
+        // LOGIN
+        function handleLogin() {
+            const email    = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            if (email && password) {
+                showSuccess(`Welcome back! Logged in as ${email}`);
+                closeModal('loginModal');
+                document.getElementById('loginEmail').value    = '';
+                document.getElementById('loginPassword').value = '';
+            } else {
+                showError('Please fill in all fields');
+            }
+        }
+
+        // SIGNUP
+        function handleSignup() {
+            const name     = document.getElementById('signupName').value;
+            const email    = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            const confirm  = document.getElementById('signupConfirm').value;
+            if (name && email && password && confirm) {
+                if (password !== confirm) { showError('Passwords do not match'); return; }
+                showSuccess(`Account created successfully, ${name}!`);
+                closeModal('signupModal');
+                ['signupName', 'signupEmail', 'signupPassword', 'signupConfirm'].forEach(id => {
+                    document.getElementById(id).value = '';
+                });
+            } else {
+                showError('Please fill in all fields');
+            }
+        }
+
+        // CONTACT MESSAGE
+        function sendMessage() {
+            const name    = document.getElementById('contactName').value;
+            const email   = document.getElementById('contactEmail').value;
+            const subject = document.getElementById('contactSubject').value;
+            const message = document.getElementById('contactMessage').value;
+            if (name && email && subject && message) {
+                showSuccess(`Message sent! We'll get back to you at ${email}`);
+                ['contactName', 'contactEmail', 'contactSubject', 'contactMessage'].forEach(id => {
+                    document.getElementById(id).value = '';
+                });
+            } else {
+                showError('Please fill in all fields');
+            }
+        }
+
+        // SUCCESS / ERROR MESSAGES
+        function showSuccess(message) {
+            const msg = document.getElementById('successMessage');
+            msg.textContent = message;
+            msg.style.background = '#4caf50';
+            msg.classList.add('show');
+            setTimeout(() => msg.classList.remove('show'), 3000);
+        }
+
+        function showError(message) {
+            const msg = document.getElementById('successMessage');
+            msg.textContent = message;
+            msg.style.background = '#f44336';
+            msg.classList.add('show');
+            setTimeout(() => { msg.classList.remove('show'); msg.style.background = '#4caf50'; }, 3000);
+        }
+
+        // CLOSE MODAL ON OUTSIDE CLICK
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', e => {
+                if (e.target === modal) modal.classList.remove('active');
+            });
+        });
+
+        // Handle hash-based navigation from index.html links
+        function handleHash() {
+            const hash = window.location.hash.replace('#', '');
+            const validPages = ['templates', 'create', 'explore', 'contact', 'portfolio-display'];
+            if (hash && validPages.includes(hash)) {
+                goToPage(hash);
+            } else if (hash === 'login') {
+                showModal('loginModal');
+            } else if (hash === 'signup') {
+                showModal('signupModal');
+            }
+        }
+
+        // INITIAL RENDERS
+        window.addEventListener('DOMContentLoaded', () => {
+            renderTemplates();
+            renderPortfolios();
+            renderFeatured();
+            handleHash();
+        });
+
+        window.addEventListener('hashchange', handleHash);
+    </script>
+</body>
+</html>
